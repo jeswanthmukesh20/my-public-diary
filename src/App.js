@@ -49,7 +49,7 @@ function App(props) {
             let cont = {
                 title: title,
                 content: content,
-                author: user.displayName,
+                author: author,
                 date: `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
             }
             dat.push(cont)
@@ -92,10 +92,10 @@ function App(props) {
                 <div className="sm:container lg:w-3/5 md:w-3/5 sm:w-3/5 mx-3 sm:mx-auto">
                     <div className="mt-10 mb-5 flex flex-col  space-y-4  justify-items-center">
                         {user ? <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {
-                            setAuthor(e.target.value);
+                            setAuthor(user.displayName);
                             console.log(author)
                         }} value={user.displayName} type="text" placeholder={"author"}/> : <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {
-                            setAuthor(e.target.value);
+                            setAuthor(user.displayName);
                             console.log(author)
                         }} value={author} type="text" placeholder={"author"}/>}
                         <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {setTitle(e.target.value)}} value={title} type="text" placeholder={"Title"}/>
