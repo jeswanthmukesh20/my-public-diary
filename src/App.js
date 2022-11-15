@@ -24,25 +24,29 @@ function App() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [data, setData] = useState([]);
+    const [date, setDate] = useState('');
     const current = new Date();
     const currentOffset = current.getTimezoneOffset();
-    const date = new Date(current.getTime() + (330 + currentOffset)*60000);
+
     const handleSubmit = () => {
         if(author !== "" && title !== "" && content !== ""){
+            const today = new Date(current.getTime() + (330 + currentOffset)*60000);
             let dat = [];
             dat.push(...data)
-            dat.push({
+            let cont = {
                 title: title,
                 content: content,
-                author: author
-            })
+                author: author,
+                date: `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
+            }
+            dat.push(cont)
+
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: title,  content: content, author: author})
             };
             fetch("https://3c8eql.deta.dev/store", requestOptions).then(resp => {
-                console.log(resp)
             }).then(() => {
                 setContent("");
                 setTitle("");
@@ -55,6 +59,7 @@ function App() {
         fetch("https://3c8eql.deta.dev/get").then(res => res.json()).then(json => {
             setData(json.resp);
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [null])
     return (
         <div>
@@ -69,16 +74,14 @@ function App() {
                         <textarea className="border-solid pt-5 border-2 py-4 px-3 rounded border-gray-600" onChange={(e) => {setContent(e.target.value)}} value={content} type="text" placeholder={"what did you do today?"}/>
                         <button onClick={() => {
                             handleSubmit()
-                            console.log(data)
                         }} className="bg-black  place-self-center w-2/3 text-white p-2 rounded hover:bg-gray-700">Submit</button>
                         
                     </div>
                     <div className="flex mt-20 flex-col-reverse items-center">
                         {data.map(blogs => {
-                            console.log(typeof blogs.date)
-                            let resp_date = new Date(blogs.date)
-                            resp_date = `${resp_date.toLocaleTimeString()} ${resp_date.toLocaleDateString()}`
-                            return <Card title={blogs.title} content={blogs.content} author={blogs.author} date={resp_date} />
+                            let today = new Date(blogs.date)
+                            let resp_date = `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
+                            return (resp_date === "Invalid Date Invalid Date") ? <Card title={blogs.title} content={blogs.content} author={blogs.author} date={blogs.date}/> : <Card title={blogs.title} content={blogs.content} author={blogs.author} date={resp_date} />
                         })}
                     </div>
 
