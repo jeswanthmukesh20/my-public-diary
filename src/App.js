@@ -37,7 +37,6 @@ function App() {
                 author: author,
                 date: `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
             }
-            console.log(cont)
             dat.push(cont)
 
             const requestOptions = {
@@ -80,7 +79,6 @@ function App() {
                         {data.map(blogs => {
                             let today = new Date(blogs.date)
                             let resp_date = `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
-                            console.log(resp_date)
                             return (resp_date === "Invalid Date Invalid Date") ? <Card title={blogs.title} content={blogs.content} author={blogs.author} date={blogs.date}/> : <Card title={blogs.title} content={blogs.content} author={blogs.author} date={resp_date} />
                         })}
                     </div>
