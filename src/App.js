@@ -49,15 +49,15 @@ function App(props) {
             let cont = {
                 title: title,
                 content: content,
-                author: author,
+                author: user.displayName,
                 date: `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
             }
+            console.log(cont)
             dat.push(cont)
-
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title,  content: content, author: author})
+                body: JSON.stringify({ title: title,  content: content, author: user.displayName})
             };
             fetch("https://3c8eql.deta.dev/store", requestOptions).then(resp => {
             }).then(() => {
