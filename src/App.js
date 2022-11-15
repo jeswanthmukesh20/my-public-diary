@@ -1,5 +1,16 @@
 import {useState, useEffect} from 'react';
 import './index.css';
+import withFirebaseAuth from 'react-with-firebase-auth'
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import firebaseConfig from './firebaseConfig';
+
+
+const firebaseApp = firebase.initializeApp(firebaseConfig);
+const firebaseAppAuth = firebaseApp.auth();
+const providers = {
+    googleProvider: new firebase.auth.GoogleAuthProvider(),
+};
 
 const Card = ({title, author, content, date}) => {
     return (
@@ -18,23 +29,27 @@ const Card = ({title, author, content, date}) => {
 }
 
 
-function App() {
+function App(props) {
     const [author, setAuthor] = useState("");
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [data, setData] = useState([]);
     const current = new Date();
     const currentOffset = current.getTimezoneOffset();
-
+    const {
+        user,
+        signOut,
+        signInWithGoogle,
+    } = props;
     const handleSubmit = () => {
-        if(author !== "" && title !== "" && content !== ""){
+        if(title !== "" && content !== "" && user){
             const today = new Date(current.getTime() + (330 + currentOffset)*60000);
             let dat = [];
             dat.push(...data)
             let cont = {
                 title: title,
                 content: content,
-                author: author,
+                author: user.displayName,
                 date: `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
             }
             dat.push(cont)
@@ -51,6 +66,8 @@ function App() {
                 setAuthor("");
             })
             setData(dat);
+        }else if(!user){
+            alert("Please login!")
         }
     }
     useEffect(() => {
@@ -62,12 +79,25 @@ function App() {
     return (
         <div>
             <nav className={"rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl"}>
-                <h1 className={"text-3xl font-bold"}>My Public Diary</h1>
+                <div className="flex flex-wrap justify-between items-left mx-auto max-w-screen-xl px-4 md:px-6 py-2.5">
+                    <a href='https://my-public-diary.netlify.app'>
+                        <h1 className={"text-3xl font-bold"}>My Public Diary</h1>
+                    </a>
+                    <div className="flex items-center">
+                        {user ? <button onClick={signOut} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Sign out</button> : <button onClick={signInWithGoogle} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Sign in</button>}
+                    </div>
+                </div>
             </nav>
             <div>
                 <div className="sm:container lg:w-3/5 md:w-3/5 sm:w-3/5 mx-3 sm:mx-auto">
                     <div className="mt-10 mb-5 flex flex-col  space-y-4  justify-items-center">
-                        <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {setAuthor(e.target.value);  console.log(author)}} value={author} type="text" placeholder={"author"}/>
+                        {user ? <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {
+                            setAuthor(e.target.value);
+                            console.log(author)
+                        }} value={user.displayName} type="text" placeholder={"author"}/> : <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {
+                            setAuthor(e.target.value);
+                            console.log(author)
+                        }} value={author} type="text" placeholder={"author"}/>}
                         <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {setTitle(e.target.value)}} value={title} type="text" placeholder={"Title"}/>
                         <textarea className="border-solid pt-5 border-2 py-4 px-3 rounded border-gray-600" onChange={(e) => {setContent(e.target.value)}} value={content} type="text" placeholder={"what did you do today?"}/>
                         <button onClick={() => {
@@ -75,13 +105,17 @@ function App() {
                         }} className="bg-black  place-self-center w-2/3 text-white p-2 rounded hover:bg-gray-700">Submit</button>
                         
                     </div>
-                    <div className="flex mt-20 flex-col-reverse items-center">
+                    { user ? <div className="flex mt-20 flex-col-reverse items-center">
                         {data.map(blogs => {
                             let today = new Date(blogs.date)
                             let resp_date = `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
-                            return (resp_date === "Invalid Date Invalid Date") ? <Card title={blogs.title} content={blogs.content} author={blogs.author} date={blogs.date}/> : <Card title={blogs.title} content={blogs.content} author={blogs.author} date={resp_date} />
+                            return (resp_date === "Invalid Date Invalid Date") ?
+                                <Card title={blogs.title} content={blogs.content} author={blogs.author}
+                                      date={blogs.date}/> :
+                                <Card title={blogs.title} content={blogs.content} author={blogs.author}
+                                      date={resp_date}/>
                         })}
-                    </div>
+                    </div> : <h1>Please Login to see the contents</h1>}
 
                    
                 </div>
@@ -91,4 +125,7 @@ function App() {
     );
 }
 
-export default App;
+export default withFirebaseAuth({
+    providers,
+    firebaseAppAuth,
+})(App);
