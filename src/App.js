@@ -1,7 +1,7 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import './index.css';
 
-const Card = ({title, author, content, date}) => {
+const Card = ({ title, author, content, date }) => {
     return (
         <div className="rounded-lg p-4 box-border mt-5 w-4/5 sm:w-4/5 md:w-4/5 lg:w-4/5 bg-slate-100 text-black hover:bg-slate-50 shadow-md hover:drop-shadow-xl">
             <h1 className="text-lg font-bold mb-5 block">
@@ -27,8 +27,8 @@ function App() {
     const currentOffset = current.getTimezoneOffset();
 
     const handleSubmit = () => {
-        if(author !== "" && title !== "" && content !== ""){
-            const today = new Date(current.getTime() + (330 + currentOffset)*60000);
+        if (author !== "" && title !== "" && content !== "") {
+            const today = new Date(current.getTime() + (330 + currentOffset) * 60000);
             let dat = [];
             dat.push(...data)
             let cont = {
@@ -42,7 +42,7 @@ function App() {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title,  content: content, author: author})
+                body: JSON.stringify({ title: title, content: content, author: author })
             };
             fetch("https://3c8eql.deta.dev/store", requestOptions).then(resp => {
             }).then(() => {
@@ -62,28 +62,34 @@ function App() {
     return (
         <div>
             <nav className={"rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl"}>
-                <h1 className={"text-3xl font-bold"}>My Public Diary</h1>
+                <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-4 md:px-6 py-2.5">
+                        <h1 className={"text-3xl font-bold"}>My Public Diary</h1>
+                    <div className="flex items-center">
+                        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Sign up</button>
+                    </div>
+                </div>
             </nav>
+
             <div>
                 <div className="sm:container lg:w-3/5 md:w-3/5 sm:w-3/5 mx-3 sm:mx-auto">
                     <div className="mt-10 mb-5 flex flex-col  space-y-4  justify-items-center">
-                        <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {setAuthor(e.target.value);  console.log(author)}} value={author} type="text" placeholder={"author"}/>
-                        <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => {setTitle(e.target.value)}} value={title} type="text" placeholder={"Title"}/>
-                        <textarea className="border-solid pt-5 border-2 py-4 px-3 rounded border-gray-600" onChange={(e) => {setContent(e.target.value)}} value={content} type="text" placeholder={"what did you do today?"}/>
+                        <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => { setAuthor(e.target.value); console.log(author) }} value={author} type="text" placeholder={"author"} />
+                        <input className="border-solid border-2 py-2 px-3 rounded border-gray-600" onChange={(e) => { setTitle(e.target.value) }} value={title} type="text" placeholder={"Title"} />
+                        <textarea className="border-solid pt-5 border-2 py-4 px-3 rounded border-gray-600" onChange={(e) => { setContent(e.target.value) }} value={content} type="text" placeholder={"what did you do today?"} />
                         <button onClick={() => {
                             handleSubmit()
                         }} className="bg-black  place-self-center w-2/3 text-white p-2 rounded hover:bg-gray-700">Submit</button>
-                        
+
                     </div>
                     <div className="flex mt-20 flex-col-reverse items-center">
                         {data.map(blogs => {
                             let today = new Date(blogs.date)
                             let resp_date = `${today.toLocaleTimeString()} ${today.toLocaleDateString()}`
-                            return (resp_date === "Invalid Date Invalid Date") ? <Card title={blogs.title} content={blogs.content} author={blogs.author} date={blogs.date}/> : <Card title={blogs.title} content={blogs.content} author={blogs.author} date={resp_date} />
+                            return (resp_date === "Invalid Date Invalid Date") ? <Card title={blogs.title} content={blogs.content} author={blogs.author} date={blogs.date} /> : <Card title={blogs.title} content={blogs.content} author={blogs.author} date={resp_date} />
                         })}
                     </div>
 
-                   
+
                 </div>
             </div>
         </div>
