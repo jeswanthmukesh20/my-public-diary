@@ -62,7 +62,7 @@ function App() {
     return (
         <div>
             <nav className={"rounded-lg px-6 py-8 ring-1 ring-slate-900/5 shadow-xl"}>
-                <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-4 md:px-6 py-2.5">
+                <div className="flex flex-wrap justify-between items-left mx-auto max-w-screen-xl px-4 md:px-6 py-2.5">
                     <a href='https://my-public-diary.netlify.app'>
                     <h1 className={"text-3xl font-bold"}>My Public Diary</h1>
                     </a>
